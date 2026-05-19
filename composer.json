@@ -1,0 +1,28 @@
+{
+    "name": "vizuall/spacing",
+    "description": "Vizuall Spacing fieldtypes",
+    "type": "statamic-addon",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.2",
+        "statamic/cms": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vizuall\\Spacing\\": "src/"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Vizuall Spacing",
+            "provider": "Vizuall\\Spacing\\AddonServiceProvider"
+        },
+        "laravel": {
+            "providers": [
+                "Vizuall\\Spacing\\AddonServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
