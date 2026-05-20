@@ -58,7 +58,7 @@
                 function boxSvg(s) {
                     const blue = '#3b82f6', gray = '#d1d5db';
                     const c = (side) => s === side ? blue : gray;
-                    return h('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none', class: 'block shrink-0' }, [
+                    return h('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none', style: 'display:block;flex-shrink:0' }, [
                         h('line', { x1: '4',  y1: '2',  x2: '16', y2: '2',  stroke: c('top'),    'stroke-width': '3', 'stroke-linecap': 'butt' }),
                         h('line', { x1: '18', y1: '4',  x2: '18', y2: '16', stroke: c('right'),  'stroke-width': '3', 'stroke-linecap': 'butt' }),
                         h('line', { x1: '16', y1: '18', x2: '4',  y2: '18', stroke: c('bottom'), 'stroke-width': '3', 'stroke-linecap': 'butt' }),
@@ -67,7 +67,7 @@
                 }
 
                 function pencilSvg() {
-                    return h('svg', { width: '20', height: '20', viewBox: '0 0 24 24', class: 'block' }, [
+                    return h('svg', { width: '20', height: '20', viewBox: '0 0 24 24', style: 'display:block' }, [
                         h('path', { fill: 'currentColor', d: 'm12.9 6.855l4.242 4.242l-9.9 9.9H3v-4.243zm1.414-1.415l2.121-2.121a1 1 0 0 1 1.414 0l2.829 2.828a1 1 0 0 1 0 1.415l-2.122 2.121z' }),
                     ]);
                 }
@@ -102,27 +102,23 @@
                             const active = v > 0 && i <= vi;
                             return h('div', {
                                 key: i,
-                                class: active
-                                    ? 'flex-1 h-2 rounded pointer-events-none relative bg-blue-500 dark:bg-blue-400'
-                                    : 'flex-1 h-2 rounded pointer-events-none relative bg-gray-200 dark:bg-white/10',
+                                class: active ? 'vzl-sp-tick is-active' : 'vzl-sp-tick',
                             }, i === vi && v > 0 ? [
-                                h('div', {
-                                    class: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full pointer-events-none bg-blue-500 dark:bg-blue-400 border-2 border-white dark:border-gray-900 ring-2 ring-blue-500 dark:ring-blue-400',
-                                }),
+                                h('div', { class: 'vzl-sp-tick-thumb' }),
                             ] : []);
                         });
                     } else {
                         const pct = nv > 1 ? (vi / (nv - 1)) * 100 : 0;
                         trackChildren = [
-                            h('div', { key: 'track', class: 'absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 rounded-sm pointer-events-none bg-gray-200 dark:bg-white/10' }),
-                            h('div', { key: 'fill',  class: 'absolute left-0 top-1/2 -translate-y-1/2 h-0.5 rounded-sm pointer-events-none bg-blue-500 dark:bg-blue-400', style: { width: pct + '%' } }),
-                            h('div', { key: 'dot',   class: 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full pointer-events-none bg-blue-500 dark:bg-blue-400', style: { left: pct + '%' } }),
+                            h('div', { key: 'track', class: 'vzl-sp-track-bg' }),
+                            h('div', { key: 'fill',  class: 'vzl-sp-track-fill', style: { width: pct + '%' } }),
+                            h('div', { key: 'dot',   class: 'vzl-sp-track-dot', style: { left: pct + '%' } }),
                         ];
                     }
 
-                    return h('div', { class: 'flex items-center gap-2.5' }, [
+                    return h('div', { class: 'vzl-sp-field' }, [
                         h('div', {
-                            class: ['cursor-pointer shrink-0 transition-opacity', v === 0 && !cm ? 'opacity-40' : ''],
+                            class: ['vzl-sp-reset', v === 0 && !cm ? 'is-zero' : ''],
                             title: 'Nulstil',
                             onClick: () => {
                                 if (cm) { customMode.value = false; customVal.value = ''; }
@@ -134,7 +130,7 @@
                             ? h('input', {
                                 value: customVal.value,
                                 placeholder: 'f.eks. 5rem',
-                                class: 'cp-input flex-1 text-[13px] px-1.5 py-0.5 rounded',
+                                class: 'cp-input vzl-sp-input',
                                 onInput: (e) => { customVal.value = e.target.value; emit('update:value', e.target.value); },
                                 onFocus: () => emit('focus'),
                                 onBlur:  () => emit('blur'),
@@ -142,7 +138,7 @@
                             : h('div', {
                                 ref:      trackRef,
                                 tabindex: '0',
-                                class:    'flex-1 flex gap-0.5 items-center h-3.5 cursor-pointer outline-none relative',
+                                class:    'vzl-sp-track',
                                 onMousedown,
                                 onKeydown,
                                 onFocus: () => emit('focus'),
@@ -152,7 +148,7 @@
                         h('button', {
                             type:  'button',
                             title: cm ? 'Brug slider' : 'Angiv custom værdi',
-                            class: ['shrink-0 cursor-pointer p-0.5 bg-transparent border-0 flex items-center', cm ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'],
+                            class: ['vzl-sp-edit', cm ? 'is-active' : ''],
                             onClick: toggleCustom,
                         }, pencilSvg()),
                     ]);
@@ -205,11 +201,8 @@
                 function toggleSide(rowIdx, side) {
                     const row = rows.value[rowIdx];
                     const idx = row.sides.indexOf(side);
-                    if (idx === -1) {
-                        row.sides.push(side);
-                    } else {
-                        row.sides.splice(idx, 1);
-                    }
+                    if (idx === -1) row.sides.push(side);
+                    else row.sides.splice(idx, 1);
                     emitRows();
                 }
 
@@ -277,7 +270,7 @@
                         { side: 'bottom', x1: '16', y1: '18', x2: '4',  y2: '18', hx: 0,  hy: 15, hw: 20, hh: 5  },
                         { side: 'left',   x1: '2',  y1: '16', x2: '2',  y2: '4',  hx: 0,  hy: 0,  hw: 5,  hh: 20 },
                     ];
-                    return h('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none', class: 'block shrink-0 select-none' },
+                    return h('svg', { width: '20', height: '20', viewBox: '0 0 20 20', fill: 'none', style: 'display:block;flex-shrink:0;user-select:none' },
                         sides.flatMap(({ side, x1, y1, x2, y2, hx, hy, hw, hh }) => [
                             h('line', {
                                 x1, y1, x2, y2,
@@ -296,19 +289,19 @@
                 }
 
                 function pencilSvg() {
-                    return h('svg', { width: '20', height: '20', viewBox: '0 0 24 24', class: 'block' }, [
+                    return h('svg', { width: '20', height: '20', viewBox: '0 0 24 24', style: 'display:block' }, [
                         h('path', { fill: 'currentColor', d: 'm12.9 6.855l4.242 4.242l-9.9 9.9H3v-4.243zm1.414-1.415l2.121-2.121a1 1 0 0 1 1.414 0l2.829 2.828a1 1 0 0 1 0 1.415l-2.122 2.121z' }),
                     ]);
                 }
 
                 function plusSvg() {
-                    return h('svg', { width: '14', height: '14', viewBox: '0 0 24 24', class: 'block' }, [
+                    return h('svg', { width: '14', height: '14', viewBox: '0 0 24 24', style: 'display:block' }, [
                         h('path', { fill: 'currentColor', d: 'M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z' }),
                     ]);
                 }
 
                 function xSvg() {
-                    return h('svg', { width: '12', height: '12', viewBox: '0 0 24 24', class: 'block' }, [
+                    return h('svg', { width: '12', height: '12', viewBox: '0 0 24 24', style: 'display:block' }, [
                         h('path', { fill: 'currentColor', d: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' }),
                     ]);
                 }
@@ -327,30 +320,28 @@
                                 const active = v > 0 && i <= visualIdx;
                                 return h('div', {
                                     key: i,
-                                    class: active
-                                        ? 'flex-1 h-2 rounded pointer-events-none relative bg-blue-500 dark:bg-blue-400'
-                                        : 'flex-1 h-2 rounded pointer-events-none relative bg-gray-200 dark:bg-white/10',
+                                    class: active ? 'vzl-sp-tick is-active' : 'vzl-sp-tick',
                                 }, i === visualIdx && v > 0 ? [
-                                    h('div', { class: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full pointer-events-none bg-blue-500 dark:bg-blue-400 border-2 border-white dark:border-gray-900 ring-2 ring-blue-500 dark:ring-blue-400' }),
+                                    h('div', { class: 'vzl-sp-tick-thumb' }),
                                 ] : []);
                             });
                         } else {
                             const pct = visual.value > 1 ? (visualIdx / (visual.value - 1)) * 100 : 0;
                             trackChildren = [
-                                h('div', { key: 'track', class: 'absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 rounded-sm pointer-events-none bg-gray-200 dark:bg-white/10' }),
-                                h('div', { key: 'fill',  class: 'absolute left-0 top-1/2 -translate-y-1/2 h-0.5 rounded-sm pointer-events-none bg-blue-500 dark:bg-blue-400', style: { width: pct + '%' } }),
-                                h('div', { key: 'dot',   class: 'absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full pointer-events-none bg-blue-500 dark:bg-blue-400', style: { left: pct + '%' } }),
+                                h('div', { key: 'track', class: 'vzl-sp-track-bg' }),
+                                h('div', { key: 'fill',  class: 'vzl-sp-track-fill', style: { width: pct + '%' } }),
+                                h('div', { key: 'dot',   class: 'vzl-sp-track-dot', style: { left: pct + '%' } }),
                             ];
                         }
 
-                        return h('div', { key: rowIdx, class: 'flex items-center gap-2.5' }, [
+                        return h('div', { key: rowIdx, class: 'vzl-sp-row' }, [
                             clickableBoxSvg(row.sides, rowIdx),
 
                             cm
                                 ? h('input', {
                                     value:       row.customVal,
                                     placeholder: 'f.eks. 5rem',
-                                    class:       'cp-input flex-1 text-[13px] px-1.5 py-0.5 rounded',
+                                    class:       'cp-input vzl-sp-input',
                                     onInput:     (e) => { rows.value[rowIdx].customVal = e.target.value; emitRows(); },
                                     onFocus:     () => emit('focus'),
                                     onBlur:      () => emit('blur'),
@@ -358,7 +349,7 @@
                                 : h('div', {
                                     ref:         el => { trackRefs.value[rowIdx] = el; },
                                     tabindex:    '0',
-                                    class:       'flex-1 flex gap-0.5 items-center h-3.5 cursor-pointer outline-none relative',
+                                    class:       'vzl-sp-track',
                                     onMousedown: (e) => onMousedown(rowIdx, e),
                                     onKeydown:   (e) => onKeydown(rowIdx, e),
                                     onFocus:     () => emit('focus'),
@@ -368,7 +359,7 @@
                             h('button', {
                                 type:    'button',
                                 title:   cm ? 'Brug slider' : 'Angiv custom værdi',
-                                class:   ['shrink-0 cursor-pointer p-0.5 bg-transparent border-0 flex items-center', cm ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'],
+                                class:   ['vzl-sp-edit', cm ? 'is-active' : ''],
                                 onClick: () => toggleCustom(rowIdx),
                             }, pencilSvg()),
 
@@ -376,20 +367,20 @@
                                 ? h('button', {
                                     type:    'button',
                                     title:   'Fjern',
-                                    class:   'shrink-0 cursor-pointer p-0.5 bg-transparent border-0 text-gray-400 dark:text-gray-500 flex items-center hover:text-red-500',
+                                    class:   'vzl-sp-remove-btn',
                                     onClick: () => removeRow(rowIdx),
                                 }, xSvg())
                                 : null,
                         ]);
                     });
 
-                    return h('div', { class: 'flex flex-col gap-2' }, [
+                    return h('div', { class: 'vzl-sp-sides' }, [
                         ...rowEls,
                         rows.value.length < 4
                             ? h('button', {
                                 type:    'button',
                                 title:   'Tilføj',
-                                class:   'self-start flex items-center gap-1 text-[12px] text-gray-400 dark:text-gray-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer bg-transparent border-0 p-0',
+                                class:   'vzl-sp-add-btn',
                                 onClick: addRow,
                             }, [plusSvg(), 'Tilføj'])
                             : null,
