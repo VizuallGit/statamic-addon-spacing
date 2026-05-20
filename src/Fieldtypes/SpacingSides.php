@@ -6,11 +6,12 @@ use Statamic\Fields\Fieldtype;
 
 class SpacingSides extends Fieldtype
 {
-    protected static $handle = 'spacing_sides';
+    protected static $handle = 'spacing';
+    protected static $title  = 'Spacing';
 
     public function component(): string
     {
-        return 'spacing-sides';
+        return 'spacing';
     }
 
     protected function configFieldItems(): array

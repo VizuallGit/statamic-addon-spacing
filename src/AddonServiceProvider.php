@@ -7,7 +7,6 @@ use Statamic\Providers\AddonServiceProvider as BaseAddonServiceProvider;
 class AddonServiceProvider extends BaseAddonServiceProvider
 {
     protected $fieldtypes = [
-        Fieldtypes\Spacing::class,
         Fieldtypes\SpacingSides::class,
     ];
 
