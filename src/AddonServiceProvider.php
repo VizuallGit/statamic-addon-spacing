@@ -11,8 +11,7 @@ class AddonServiceProvider extends BaseAddonServiceProvider
         Fieldtypes\SpacingSides::class,
     ];
 
-    public function bootAddon(): void
-    {
-        $this->registerScript(__DIR__.'/../resources/js/addon.js');
-    }
+    protected $scripts = [
+        __DIR__.'/../resources/js/addon.js',
+    ];
 }
