@@ -1,5 +1,5 @@
 {
-    "name": "vizuall/spacing",
+    "name": "statamic-addon/spacing",
     "description": "Vizuall Spacing fieldtypes",
     "type": "statamic-addon",
     "license": "proprietary",
