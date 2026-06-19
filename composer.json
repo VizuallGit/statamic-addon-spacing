@@ -1,6 +1,6 @@
 {
     "name": "statamic-addon/spacing",
-    "description": "Vizuall Spacing fieldtypes",
+    "description": "Spacing fieldtypes",
     "type": "statamic-addon",
     "license": "proprietary",
     "require": {
@@ -14,7 +14,7 @@
     },
     "extra": {
         "statamic": {
-            "name": "Vizuall Spacing",
+            "name": "Spacing",
             "provider": "Vizuall\\Spacing\\AddonServiceProvider"
         },
         "laravel": {
