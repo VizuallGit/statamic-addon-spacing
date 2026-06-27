@@ -17,13 +17,6 @@ class SpacingSides extends Fieldtype
     protected function configFieldItems(): array
     {
         return [
-            'unit' => [
-                'display' => __('Unit'),
-                'type'    => 'select',
-                'options' => ['px' => 'px', 'rem' => 'rem', 'em' => 'em', '%' => '%'],
-                'default' => 'px',
-                'width'   => 25,
-            ],
             'min' => [
                 'display' => __('Min'),
                 'type'    => 'integer',
