@@ -2,7 +2,7 @@
     'use strict';
 
     Statamic.booting(() => {
-        const { h, ref, computed } = window.Vue;
+        const { h, ref, computed, watch } = window.Vue;
 
         Statamic.$components.register('spacing-fieldtype', {
             inheritAttrs: false,
@@ -38,12 +38,24 @@
                 const rows      = ref(parseRows(props.value));
                 const trackRefs = ref([]);
 
+                // Følg eksterne value-ændringer (fx column builderens
+                // breakpoint-arv der skriver via setFieldValue). Uden dette
+                // viser komponenten kun værdien fra mount-tidspunktet.
+                let lastEmitted = null;
+
+                watch(() => props.value, (v) => {
+                    if (JSON.stringify(v ?? null) === lastEmitted) return; // eget echo
+                    rows.value = parseRows(v);
+                }, { deep: true });
+
                 function emitRows() {
-                    emit('update:value', rows.value.map(r => ({
+                    const payload = rows.value.map(r => ({
                         sides:  r.sides,
                         value:  r.custom ? (r.customVal || null) : r.value,
                         custom: r.custom,
-                    })));
+                    }));
+                    lastEmitted = JSON.stringify(payload);
+                    emit('update:value', payload);
                 }
 
                 function toggleSide(rowIdx, side) {
